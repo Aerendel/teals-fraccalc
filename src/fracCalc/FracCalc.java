@@ -28,15 +28,144 @@ public class FracCalc {
 	//      e.g. return ==> "1_1/4"
 	public static String produceAnswer(String input)
 	{ 
-		// TODO: Implement this function to produce the solution to the input
-
-		String[] elements = input.split(" ");
+		String remainder = input;
+		String leftOperand = getFirstElement(remainder);	
+		remainder = remainder.substring(leftOperand.length() + 1);		
 		
-		return parseElement(elements[2]);
+		String operator = getFirstElement(remainder);		
+		remainder = remainder.substring(operator.length() + 1);
+		
+		String rightOperand = remainder;
+
+		if(operator.equals("+"))
+			return Add(parseOperand(leftOperand), parseOperand(rightOperand));
+		if(operator.equals("-"))
+			return Subtract(parseOperand(leftOperand), parseOperand(rightOperand));
+		if(operator.equals("*"))
+			return Multiply(parseOperand(leftOperand), parseOperand(rightOperand));
+		if(operator.equals("/"))
+			return Divide(parseOperand(leftOperand), parseOperand(rightOperand));
+		
+		return input;
+	}
+	//   1/2 + 3/4 + 1/3 + 8/5
+	
+	//Add 2 formatted operands and return the result as string
+	private static String Add(String operand1, String operand2) {
+		int whole1 = getWhole(operand1);
+		int numerator1 = getNumerator(operand1);
+		int denominator1 = getDenominator(operand1);
+		
+		int whole2 = getWhole(operand2);
+		int numerator2 = getNumerator(operand2);
+		int denominator2 = getDenominator(operand2);
+		
+		//handle negative
+		if(whole1 < 0)
+			numerator1 *= -1;
+		if(whole2 < 0)
+			numerator2 *= -1;
+		
+		int resultWhole = whole1 + whole2;
+		int resultNumerator = numerator1 * denominator2 + numerator2 * denominator1;
+		int resultDenominator = denominator1 * denominator2;
+		
+		return fractionAsString(resultWhole, resultNumerator, resultDenominator);
 	}
 
-	// TODO: Fill in the space below with any helper methods that you think you will need
-	private static String parseElement(String expression) {
+	//Subtracts 2 formatted operands and return the result as string
+	private static String Subtract(String operand1, String operand2) {
+		int whole1 = getWhole(operand1);
+		int numerator1 = getNumerator(operand1);
+		int denominator1 = getDenominator(operand1);
+		
+		int whole2 = getWhole(operand2);
+		int numerator2 = getNumerator(operand2);
+		int denominator2 = getDenominator(operand2);
+		
+		//handle negative
+		if(whole1 < 0)
+			numerator1 *= -1;
+		
+		if(whole2 < 0)
+			numerator2 *= -1;
+		
+		int resultWhole = whole1 - whole2;
+		int resultNumerator = numerator1 * denominator2 - numerator2 * denominator1;
+		int resultDenominator = denominator1 * denominator2;
+		
+		return fractionAsString(resultWhole, resultNumerator, resultDenominator);
+	}
+	
+	//Multiply 2 formatted operands and return the result as string
+	private static String Multiply(String operand1, String operand2) {
+		int whole1 = getWhole(operand1);
+		int numerator1 = getNumerator(operand1);
+		int denominator1 = getDenominator(operand1);
+		
+		int whole2 = getWhole(operand2);
+		int numerator2 = getNumerator(operand2);
+		int denominator2 = getDenominator(operand2);
+		
+		//handle negative
+		if(whole1 < 0)
+			numerator1 *= -1;
+		
+		if(whole2 < 0)
+			numerator2 *= -1;
+		
+		int resultWhole = whole1 * whole2;
+		int resultNumerator = numerator1 * numerator2;
+		int resultDenominator = denominator1 * denominator2;
+		
+		return fractionAsString(resultWhole, resultNumerator, resultDenominator);
+	}	
+
+	//Divide 2 formatted operands and return the result as string
+	private static String Divide(String operand1, String operand2) {
+		int whole1 = getWhole(operand1);
+		int numerator1 = getNumerator(operand1);
+		int denominator1 = getDenominator(operand1);
+		
+		int whole2 = getWhole(operand2);
+		int numerator2 = getNumerator(operand2);
+		int denominator2 = getDenominator(operand2);
+		
+		//handle negative
+		if(whole1 < 0)
+			numerator1 *= -1;
+		
+		if(whole2 < 0)
+			numerator2 *= -1;
+		
+		int resultWhole = whole1 / whole2;
+		int resultNumerator = numerator1 * denominator2;
+		int resultDenominator = denominator1 * numerator2;
+		
+		return fractionAsString(resultWhole, resultNumerator, resultDenominator);
+	}
+	
+	// 1/2 + 3/4 = 1*4/2*4 + 3*2/4*2 = 4/8 + 6/8 = 10/8
+	private static int getWhole(String operand) {
+		String whole = operand.substring(0, operand.indexOf("n"));
+		return Integer.parseInt(whole);
+	}
+
+	private static int getNumerator(String operand) {
+		String numerator = operand.substring(operand.indexOf("n") + 1, operand.indexOf("d"));
+		return Integer.parseInt(numerator);
+	}
+	
+	private static int getDenominator(String operand) {
+		String denominator = operand.substring(operand.indexOf("d") + 1);
+		return Integer.parseInt(denominator);
+	}
+	
+	private static String getFirstElement(String input) {
+		return input.substring(0, input.indexOf(" "));	
+	}
+	
+	private static String parseOperand(String expression) {
 		String whole = "0";
 		String numerator = "0";
 		String denominator = "1";
@@ -59,6 +188,19 @@ public class FracCalc {
 			whole = expression;
 		}		
 		
-		return "whole:"+whole+" numerator:"+numerator+" denominator:"+denominator;
+		return whole+"n"+numerator+"d"+denominator;
+	}
+	
+	private static String fractionAsString(int whole, int numerator, int denominator) {
+		if(numerator == 0)
+			return "" + whole;
+		
+		if(whole == 0)
+			return numerator + "/" + denominator;
+		
+		if(whole < 0 && numerator < 0)
+			numerator *= -1;		
+					
+		return whole + "_" + numerator + "/" + denominator;
 	}
 }
