@@ -52,49 +52,55 @@ public class FracCalc {
 	
 	//Add 2 formatted operands and return the result as string
 	private static String Add(String operand1, String operand2) {
-		int whole1 = getWhole(operand1);
-		int numerator1 = getNumerator(operand1);
-		int denominator1 = getDenominator(operand1);
+		int w1 = getWhole(operand1);
+		int n1 = getNumerator(operand1);
+		int d1 = getDenominator(operand1);
 		
-		int whole2 = getWhole(operand2);
-		int numerator2 = getNumerator(operand2);
-		int denominator2 = getDenominator(operand2);
+		int w2 = getWhole(operand2);
+		int n2 = getNumerator(operand2);
+		int d2 = getDenominator(operand2);
 		
 		//handle negative
-		if(whole1 < 0)
-			numerator1 *= -1;
-		if(whole2 < 0)
-			numerator2 *= -1;
+		if(w1 < 0)
+			n1 *= -1;
+		if(w2 < 0)
+			n2 *= -1;
+
+		//simplify
+		n1 = w1 * d1 + n1;
+		n2 = w2 * d2 + n2;
 		
-		int resultWhole = whole1 + whole2;
-		int resultNumerator = numerator1 * denominator2 + numerator2 * denominator1;
-		int resultDenominator = denominator1 * denominator2;
+		//int resultWhole = w1 + w2;
+		int resultNumerator = n1 * d2 + n2 * d1;
+		int resultDenominator = d1 * d2;
 		
-		return fractionAsStringSimplified(resultWhole, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(0, resultNumerator, resultDenominator);
 	}
 
 	//Subtracts 2 formatted operands and return the result as string
 	private static String Subtract(String operand1, String operand2) {
-		int whole1 = getWhole(operand1);
-		int numerator1 = getNumerator(operand1);
-		int denominator1 = getDenominator(operand1);
+		int w1 = getWhole(operand1);
+		int n1 = getNumerator(operand1);
+		int d1 = getDenominator(operand1);
 		
-		int whole2 = getWhole(operand2);
-		int numerator2 = getNumerator(operand2);
-		int denominator2 = getDenominator(operand2);
+		int w2 = getWhole(operand2);
+		int n2 = getNumerator(operand2);
+		int d2 = getDenominator(operand2);
 		
 		//handle negative
-		if(whole1 < 0)
-			numerator1 *= -1;
+		if(w1 < 0)
+			n1 *= -1;
+		if(w2 < 0)
+			n2 *= -1;
+
+		//simplify
+		n1 = w1 * d1 + n1;
+		n2 = w2 * d2 + n2;
+
+		int resultNumerator = n1 * d2 - n2 * d1;
+		int resultDenominator = d1 * d2;
 		
-		if(whole2 < 0)
-			numerator2 *= -1;
-		
-		int resultWhole = whole1 - whole2;
-		int resultNumerator = numerator1 * denominator2 - numerator2 * denominator1;
-		int resultDenominator = denominator1 * denominator2;
-		
-		return fractionAsStringSimplified(resultWhole, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(0, resultNumerator, resultDenominator);
 	}
 	
 	//Multiply 2 formatted operands and return the result as string
@@ -202,12 +208,20 @@ public class FracCalc {
 		}
 		
 		//extract whole
-		if(numerator != 0) {
+		if(numerator > 0) {
 			while(numerator >= denominator) {
 				whole += 1;
 				numerator = numerator - denominator;
 			}
 		}
+		else if(numerator < 0) {
+			while(numerator <= denominator * -1) {
+				whole -= 1;
+				numerator = numerator + denominator;
+			}
+		}
+
+			
 								
 		return fractionAsString(whole, numerator, denominator);
 	}
