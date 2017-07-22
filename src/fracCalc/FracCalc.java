@@ -70,7 +70,7 @@ public class FracCalc {
 		int resultNumerator = numerator1 * denominator2 + numerator2 * denominator1;
 		int resultDenominator = denominator1 * denominator2;
 		
-		return fractionAsString(resultWhole, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(resultWhole, resultNumerator, resultDenominator);
 	}
 
 	//Subtracts 2 formatted operands and return the result as string
@@ -94,7 +94,7 @@ public class FracCalc {
 		int resultNumerator = numerator1 * denominator2 - numerator2 * denominator1;
 		int resultDenominator = denominator1 * denominator2;
 		
-		return fractionAsString(resultWhole, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(resultWhole, resultNumerator, resultDenominator);
 	}
 	
 	//Multiply 2 formatted operands and return the result as string
@@ -118,7 +118,7 @@ public class FracCalc {
 		int resultNumerator = n1 * n2 + w1 * n2 * d1 + w2 * n1 * d2;
 		int resultDenominator = d1 * d2;
 		
-		return fractionAsString(resultWhole, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(resultWhole, resultNumerator, resultDenominator);
 	}	
 
 	//Divide 2 formatted operands and return the result as string
@@ -130,6 +130,7 @@ public class FracCalc {
 		int w2 = getWhole(operand2);
 		int n2 = getNumerator(operand2);
 		int d2 = getDenominator(operand2);
+		
 		
 		//handle negative
 		if(w1 < 0)
@@ -144,7 +145,7 @@ public class FracCalc {
 		int resultNumerator = n1 * d2;
 		int resultDenominator = d1 * n2;
 		
-		return fractionAsString(0, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(0, resultNumerator, resultDenominator);
 	}
 	
 	private static int getWhole(String operand) {
@@ -192,16 +193,59 @@ public class FracCalc {
 		return whole+"n"+numerator+"d"+denominator;
 	}
 	
-	private static String fractionAsString(int whole, int numerator, int denominator) {
+	private static String fractionAsStringSimplified(int whole, int numerator, int denominator) {	
+		//Simplify
+		if(numerator != 0 && denominator != 0) {
+			int gcd = Math.abs(GetGCD(numerator, denominator));
+			numerator = numerator / gcd;
+			denominator = denominator / gcd;
+		}
+		
+		//extract whole
+		if(numerator != 0) {
+			while(numerator >= denominator) {
+				whole += 1;
+				numerator = numerator - denominator;
+			}
+		}
+								
+		return fractionAsString(whole, numerator, denominator);
+	}
+	
+	private static String fractionAsString(int whole, int numerator, int denominator) {	
+		System.out.println(String.format("whole=%1$s, n=%2$s, d=%3$s", whole, numerator, denominator));
+		
 		if(numerator == 0)
 			return "" + whole;
-		
+
 		if(whole == 0)
 			return numerator + "/" + denominator;
 		
 		if(whole < 0 && numerator < 0)
 			numerator *= -1;		
 					
-		return whole + "_" + numerator + "/" + denominator;
+		String s = whole + "_" + numerator + "/" + denominator;
+		System.out.println(s);
+		return s;
 	}
+	
+
+	///Returns the Greatest Common Divisor of two numbers, using Euclidean algorithm
+	public static int GetGCD(int a, int b) {
+		if(a < b) {
+			int tmp = a;
+			a = b;
+			b = tmp;
+		}
+		
+		int r;
+		while(true) {
+			r = a % b;
+			if(r == 0)
+				return b;
+			a = b;
+			b = r;
+		}			
+	}
+
 }

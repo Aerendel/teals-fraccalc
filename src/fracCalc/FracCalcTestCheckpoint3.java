@@ -1,6 +1,7 @@
 package fracCalc;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 // Checkpoint 3-only tests
 public class FracCalcTestCheckpoint3
@@ -32,4 +33,11 @@ public class FracCalcTestCheckpoint3
     @Test public void testCheckpoint3_DivisionWithZero6() {FracCalcTestALL.assertForEarlyCheckpoints(null, null, "0", FracCalc.produceAnswer("0/24 / 1/46"));}
     @Test public void testCheckpoint3_DivisionCombined2() {FracCalcTestALL.assertForEarlyCheckpoints(null, null, "-2_2/3", FracCalc.produceAnswer("16/4 / -3/2"));}
     @Test public void testCheckpoint3_DivisionCombined3() {FracCalcTestALL.assertForEarlyCheckpoints(null, null, "6_661/5520", FracCalc.produceAnswer("-38_3/72 / -4_82/37"));}
+    @Test
+    public void testGCD() {
+    		assertEquals(12, FracCalc.GetGCD(12, 24));
+    		assertEquals(5, FracCalc.GetGCD(35, 5));
+    		assertEquals(2, FracCalc.GetGCD(26, 100));
+    		assertEquals(10000, FracCalc.GetGCD(100000, 10000));
+    }
 }
