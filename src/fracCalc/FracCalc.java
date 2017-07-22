@@ -70,11 +70,10 @@ public class FracCalc {
 		n1 = w1 * d1 + n1;
 		n2 = w2 * d2 + n2;
 		
-		//int resultWhole = w1 + w2;
 		int resultNumerator = n1 * d2 + n2 * d1;
 		int resultDenominator = d1 * d2;
 		
-		return fractionAsStringSimplified(0, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(resultNumerator, resultDenominator);
 	}
 
 	//Subtracts 2 formatted operands and return the result as string
@@ -100,7 +99,7 @@ public class FracCalc {
 		int resultNumerator = n1 * d2 - n2 * d1;
 		int resultDenominator = d1 * d2;
 		
-		return fractionAsStringSimplified(0, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(resultNumerator, resultDenominator);
 	}
 	
 	//Multiply 2 formatted operands and return the result as string
@@ -115,16 +114,18 @@ public class FracCalc {
 		
 		//handle negative
 		if(w1 < 0)
-			n1 *= -1;
-		
+			n1 *= -1;		
 		if(w2 < 0)
 			n2 *= -1;
+
+		//simplify
+		n1 = w1 * d1 + n1;
+		n2 = w2 * d2 + n2;
 		
-		int resultWhole = w1 * w2;
-		int resultNumerator = n1 * n2 + w1 * n2 * d1 + w2 * n1 * d2;
+		int resultNumerator = n1 * n2;
 		int resultDenominator = d1 * d2;
 		
-		return fractionAsStringSimplified(resultWhole, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(resultNumerator, resultDenominator);
 	}	
 
 	//Divide 2 formatted operands and return the result as string
@@ -151,7 +152,7 @@ public class FracCalc {
 		int resultNumerator = n1 * d2;
 		int resultDenominator = d1 * n2;
 		
-		return fractionAsStringSimplified(0, resultNumerator, resultDenominator);
+		return fractionAsStringSimplified(resultNumerator, resultDenominator);
 	}
 	
 	private static int getWhole(String operand) {
@@ -199,15 +200,26 @@ public class FracCalc {
 		return whole+"n"+numerator+"d"+denominator;
 	}
 	
-	private static String fractionAsStringSimplified(int whole, int numerator, int denominator) {	
+	private static String fractionAsStringSimplified(int numerator, int denominator) {	
+		//Cancel double negatives
+		if(numerator < 0 && denominator < 0) {
+			numerator *= -1;
+			denominator *= -1;
+		}
+		else if(denominator < 0 && numerator > 0) { //make sure negative sign is on numerator, makes it easier
+			numerator *= -1;
+			denominator *= -1; 
+		}
+		
 		//Simplify
 		if(numerator != 0 && denominator != 0) {
 			int gcd = Math.abs(GetGCD(numerator, denominator));
 			numerator = numerator / gcd;
 			denominator = denominator / gcd;
 		}
-		
+				
 		//extract whole
+		int whole = 0;
 		if(numerator > 0) {
 			while(numerator >= denominator) {
 				whole += 1;
