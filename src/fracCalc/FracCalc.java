@@ -1,3 +1,7 @@
+/*
+ * Author: Sylvain Slaton
+ * Date: 20170720
+ */
 package fracCalc;
 import java.util.Scanner;
 public class FracCalc {
@@ -16,6 +20,8 @@ public class FracCalc {
 
 			input = scan.nextLine();
 		}
+		
+		scan.close();
 	}
 
 	// ** IMPORTANT ** DO NOT DELETE THIS FUNCTION.  This function will be used to test your code
@@ -37,21 +43,14 @@ public class FracCalc {
 		
 		String rightOperand = remainder;
 
-		if(operator.equals("+"))
-			return Add(parseOperand(leftOperand), parseOperand(rightOperand));
-		if(operator.equals("-"))
-			return Subtract(parseOperand(leftOperand), parseOperand(rightOperand));
-		if(operator.equals("*"))
-			return Multiply(parseOperand(leftOperand), parseOperand(rightOperand));
-		if(operator.equals("/"))
-			return Divide(parseOperand(leftOperand), parseOperand(rightOperand));
-		
-		return input;
+		return Calculate(leftOperand, rightOperand, operator);
 	}
 	//   1/2 + 3/4 + 1/3 + 8/5
 	
-	//Add 2 formatted operands and return the result as string
-	private static String Add(String operand1, String operand2) {
+	private static String Calculate(String operand1, String operand2, String operator) {
+		operand1 = parseOperand(operand1);
+		operand2 = parseOperand(operand2);
+		
 		int w1 = getWhole(operand1);
 		int n1 = getNumerator(operand1);
 		int d1 = getDenominator(operand1);
@@ -68,87 +67,46 @@ public class FracCalc {
 
 		//simplify
 		n1 = w1 * d1 + n1;
-		n2 = w2 * d2 + n2;
+		n2 = w2 * d2 + n2;	
 		
+		if(operator.equals("+"))
+			return Add(n1, d1, n2, d2);
+		if(operator.equals("-"))
+			return Subtract(n1, d1, n2, d2);
+		if(operator.equals("*"))
+			return Multiply(n1, d1, n2, d2);
+		if(operator.equals("/"))
+			return Divide(n1, d1, n2, d2);
+		
+		return "Invalid operation";
+	}
+	
+	//Add 2 fractions and return the result as string
+	private static String Add(int n1, int d1, int n2, int d2) {		
 		int resultNumerator = n1 * d2 + n2 * d1;
 		int resultDenominator = d1 * d2;
 		
 		return fractionAsStringSimplified(resultNumerator, resultDenominator);
 	}
 
-	//Subtracts 2 formatted operands and return the result as string
-	private static String Subtract(String operand1, String operand2) {
-		int w1 = getWhole(operand1);
-		int n1 = getNumerator(operand1);
-		int d1 = getDenominator(operand1);
-		
-		int w2 = getWhole(operand2);
-		int n2 = getNumerator(operand2);
-		int d2 = getDenominator(operand2);
-		
-		//handle negative
-		if(w1 < 0)
-			n1 *= -1;
-		if(w2 < 0)
-			n2 *= -1;
-
-		//simplify
-		n1 = w1 * d1 + n1;
-		n2 = w2 * d2 + n2;
-
+	//Subtracts 2 fractions and return the result as string
+	private static String Subtract(int n1, int d1, int n2, int d2) {
 		int resultNumerator = n1 * d2 - n2 * d1;
 		int resultDenominator = d1 * d2;
 		
 		return fractionAsStringSimplified(resultNumerator, resultDenominator);
 	}
 	
-	//Multiply 2 formatted operands and return the result as string
-	private static String Multiply(String operand1, String operand2) {
-		int w1 = getWhole(operand1);
-		int n1 = getNumerator(operand1);
-		int d1 = getDenominator(operand1);
-		
-		int w2 = getWhole(operand2);
-		int n2 = getNumerator(operand2);
-		int d2 = getDenominator(operand2);
-		
-		//handle negative
-		if(w1 < 0)
-			n1 *= -1;		
-		if(w2 < 0)
-			n2 *= -1;
-
-		//simplify
-		n1 = w1 * d1 + n1;
-		n2 = w2 * d2 + n2;
-		
+	//Multiply 2 fractions and return the result as string
+	private static String Multiply(int n1, int d1, int n2, int d2) {		
 		int resultNumerator = n1 * n2;
 		int resultDenominator = d1 * d2;
 		
 		return fractionAsStringSimplified(resultNumerator, resultDenominator);
 	}	
 
-	//Divide 2 formatted operands and return the result as string
-	private static String Divide(String operand1, String operand2) {
-		int w1 = getWhole(operand1);
-		int n1 = getNumerator(operand1);
-		int d1 = getDenominator(operand1);
-		
-		int w2 = getWhole(operand2);
-		int n2 = getNumerator(operand2);
-		int d2 = getDenominator(operand2);
-		
-		
-		//handle negative
-		if(w1 < 0)
-			n1 *= -1;
-		if(w2 < 0)
-			n2 *= -1;
-		
-		//simplify
-		n1 = w1 * d1 + n1;
-		n2 = w2 * d2 + n2;
-		
+	//Divide 2 fractions and return the result as string
+	private static String Divide(int n1, int d1, int n2, int d2) {		
 		int resultNumerator = n1 * d2;
 		int resultDenominator = d1 * n2;
 		
@@ -232,15 +190,11 @@ public class FracCalc {
 				numerator = numerator + denominator;
 			}
 		}
-
-			
 								
 		return fractionAsString(whole, numerator, denominator);
 	}
 	
 	private static String fractionAsString(int whole, int numerator, int denominator) {	
-		System.out.println(String.format("whole=%1$s, n=%2$s, d=%3$s", whole, numerator, denominator));
-		
 		if(numerator == 0)
 			return "" + whole;
 
@@ -250,9 +204,7 @@ public class FracCalc {
 		if(whole < 0 && numerator < 0)
 			numerator *= -1;		
 					
-		String s = whole + "_" + numerator + "/" + denominator;
-		System.out.println(s);
-		return s;
+		return whole + "_" + numerator + "/" + denominator;
 	}
 	
 
